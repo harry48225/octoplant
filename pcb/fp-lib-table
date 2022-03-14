@@ -1,3 +1,4 @@
 (fp_lib_table
   (lib (name "custom")(type "KiCad")(uri "/home/harry/Downloads/LIB_ATTINY824-SSFR/ATTINY824-SSFR/KiCad/custom.pretty")(options "")(descr ""))
+  (lib (name "art")(type "KiCad")(uri "${KIPRJMOD}/art.pretty")(options "")(descr ""))
 )
