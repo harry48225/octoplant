@@ -4,6 +4,12 @@
 
   (paper "A4")
 
+  (title_block
+    (title "octo plant friend")
+    (date "2022-03-15")
+    (rev "1.0")
+  )
+
   (lib_symbols
     (symbol "Connector:TestPoint" (pin_numbers hide) (pin_names (offset 0.762) hide) (in_bom yes) (on_board yes)
       (property "Reference" "TP" (id 0) (at 0 6.858 0)
