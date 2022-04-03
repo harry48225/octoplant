@@ -17,7 +17,6 @@ void setup() {
 
   TCA0.SPLIT.CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV64_gc; //enable the timer 64 prescaler
   delay(100);
-  //set_millis(0);
 }
 
 void loop() {
@@ -26,7 +25,7 @@ void loop() {
   }
 
 
-  int moisture = 6;//MoistureManager::getNormalisedReading();
+  int moisture = MoistureManager::getNormalisedReading();
   for (int i = 0; i < 12; i++) {
     if ((12-i) <= moisture) {
       LedManager::turnOnLed(i);
