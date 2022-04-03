@@ -71,13 +71,10 @@ namespace LedManager {
   }
 
   void setup() {
-    _closeCurrentPaths();
-
     // There is a 64 prescaler on TCA0
     TCA0.SPLIT.LPER = 0xFF; // Count down from 0xFF (255), At 10MHz  (10MHz/255)/64 ~ 600Hz
-    TCA0.SPLIT.LCMP0 = 0x0F; // Trigger interrupt after full count
+    TCA0.SPLIT.LCMP0 = 0xFF; // Trigger interrupt after full count
     TCA0.SPLIT.INTCTRL |= 0x10; // Enable interrupt on LCMP0
-    //_openCurrentPath(0,3);
   }
 
   // Triggers ~600Hz
@@ -87,6 +84,7 @@ namespace LedManager {
       _createCurrentPathForLed(_currentLed);
     }
     _currentLed = (_currentLed + 1) % 12;
+    TCA0.SPLIT.INTFLAGS = 0xFF; // Clear the int flags otherwise millis breaks
   }
 }
 

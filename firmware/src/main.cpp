@@ -1,10 +1,11 @@
 #include <Arduino.h>
 #include "LedManager.h"
 #include "MoistureManager.h"
+#include "SleepManager.h"
 
-#define MILLIS_USE_TIMERB0 // Use timer B for millis - we use timer A for PWM and the leds
-
-volatile byte ledState = 0;
+#ifndef MILLIS_USE_TIMERB1
+  #error "This sketch is written for use with TCB1 as the millis timing source"
+#endif
 
 void setup() {
   takeOverTCA0();
@@ -12,14 +13,20 @@ void setup() {
   
   LedManager::setup();
   MoistureManager::setup();
+  SleepManager::setup();
 
   TCA0.SPLIT.CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV64_gc; //enable the timer 64 prescaler
-
-  PORTA.PIN2CTRL |= (PORT_PULLUPEN_bm | PORT_ISC_BOTHEDGES_gc); // Enable pin change interrupt and internal pullup
+  delay(100);
+  //set_millis(0);
 }
 
 void loop() {
-  int moisture = MoistureManager::getNormalisedReading();
+  if (millis() > 1000) {
+    SleepManager::sleep();
+  }
+
+
+  int moisture = 6;//MoistureManager::getNormalisedReading();
   for (int i = 0; i < 12; i++) {
     if ((12-i) <= moisture) {
       LedManager::turnOnLed(i);
@@ -28,16 +35,4 @@ void loop() {
       LedManager::turnOffLed(i);
     }
   }
-
-  if (ledState) {
-    LedManager::turnOnLed(2);
-  } else {
-    LedManager::turnOffLed(2);
-  }
-}
-
-ISR(PORTA_PORT_vect) {
-  byte flags = PORTA.INTFLAGS;
-  PORTA.INTFLAGS = flags; // Clear the int flags
-  ledState = !ledState;
 }
