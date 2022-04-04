@@ -16,46 +16,50 @@ namespace ConfigManager {
   int WET_POINT;// = 1500;
   int NORMALISED_WATER_POINT;// = 3;
 
+  void waitForButtonRelease() {
+    while (digitalRead(PIN_PA2) == LOW) {
+      delay(10);
+    }
+  }
+
+  void waitForButtonPress() {
+    while (digitalRead(PIN_PA2) == HIGH) {
+      delay(10);
+    }
+  }
+
   void calibrate() {
     // Enable button
     pinMode(PIN_PA2, INPUT_PULLUP);
+    
     // Set the wet point
+    
+    // Flash all leds
     for (int i = 0; i < 12; i++) {
       LedManager::flashLed(i, LedManager::FlashRate::FAST);
     }
 
-    while (digitalRead(PIN_PA2) == LOW) {
-      delay(10);
-    }
-
-    while (digitalRead(PIN_PA2) == HIGH) {
-      delay(10);
-    }
+    waitForButtonPress();
 
     WET_POINT = MoistureManager::getRawReading() + 100;
 
-    while (digitalRead(PIN_PA2) == LOW) {
-      delay(10);
-    }
-
     LedManager::resetLeds();
 
+    waitForButtonRelease();
+
+    // Set the dry point  
+
+    // Flash the lowest LED
     LedManager::flashLed(11, LedManager::FlashRate::FAST);
-
-    delay(100);
-
-    while(digitalRead(PIN_PA2) == HIGH) {
-      delay(10);
-    }
+    waitForButtonPress();
 
     DRY_POINT = MoistureManager::getRawReading() - 100;
 
-    while (digitalRead(PIN_PA2) == LOW) {
-      delay(10);
-    }
+    waitForButtonRelease();
 
     LedManager::resetLeds();
 
+    // Display programming animation
     for (int i = 0; i <= 6; i++) {
       LedManager::turnOnLed(6-i);
       LedManager::turnOnLed(5+i);
