@@ -39,6 +39,8 @@ namespace ConfigManager {
       LedManager::flashLed(i, LedManager::FlashRate::FAST);
     }
 
+    waitForButtonRelease();
+
     waitForButtonPress();
 
     WET_POINT = MoistureManager::getRawReading() + 100;
@@ -72,6 +74,16 @@ namespace ConfigManager {
   }
 
   void loadConfig() {
+    // First determine the reset cause
+
+    byte isPowerOnReset = 0;
+    // Megatinycore stores the reset flags in GPIO0 and automatically clears them
+    byte reset_flags = GPIO0;
+    // If it's not a software reset we may want to enter calibration mode
+    if (reset_flags & RSTCTRL_PORF_bm) {
+      isPowerOnReset = 1;
+    }
+
     // Reads the configuration from EEPROM
     EEPROM.get(DRY_POINT_ADDR, DRY_POINT);
     EEPROM.get(WET_POINT_ADDR, WET_POINT);
@@ -84,7 +96,7 @@ namespace ConfigManager {
     // Calibrate if the eeprom is not configured
     // or if the button is held
     // If it's not configured the EEPROM contains 0xFF in each location
-    if ((DRY_POINT == 0xFFFF && WET_POINT == 0xFFFF) || digitalRead(PIN_PA2) == LOW) {
+    if ((DRY_POINT == 0xFFFF && WET_POINT == 0xFFFF) || (digitalRead(PIN_PA2) == LOW && isPowerOnReset)) {
       calibrate();
     }
   }
