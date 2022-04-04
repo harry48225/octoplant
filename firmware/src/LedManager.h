@@ -9,5 +9,7 @@ namespace LedManager {
 
   enum FlashRate {NONE, SLOW, MEDIUM, FAST};
   extern void flashLed(int ledNumber, FlashRate rate);
+
+  extern void resetLeds();
 }
 #endif

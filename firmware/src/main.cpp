@@ -21,9 +21,9 @@ void setup() {
 }
 
 void loop() {
-  // if (millis() > 5000) {
-  //   SleepManager::sleep();
-  // }
+  if (millis() > 5000) {
+    SleepManager::sleep();
+  }
 
   int moisture = MoistureManager::getNormalisedReading();
   for (int i = 0; i < 12; i++) {

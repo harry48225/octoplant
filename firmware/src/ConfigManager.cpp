@@ -19,10 +19,13 @@ namespace ConfigManager {
   void calibrate() {
     // Enable button
     pinMode(PIN_PA2, INPUT_PULLUP);
-
     // Set the wet point
     for (int i = 0; i < 12; i++) {
       LedManager::flashLed(i, LedManager::FlashRate::FAST);
+    }
+
+    while (digitalRead(PIN_PA2) == LOW) {
+      delay(10);
     }
 
     while (digitalRead(PIN_PA2) == HIGH) {
@@ -35,10 +38,7 @@ namespace ConfigManager {
       delay(10);
     }
 
-    for (int i = 0; i < 12; i++) {
-      LedManager::flashLed(i, LedManager::FlashRate::NONE);
-      LedManager::turnOffLed(i);
-    }
+    LedManager::resetLeds();
 
     LedManager::flashLed(11, LedManager::FlashRate::FAST);
 
@@ -54,8 +54,15 @@ namespace ConfigManager {
       delay(10);
     }
 
-    LedManager::flashLed(11, LedManager::FlashRate::NONE);
-    LedManager::turnOffLed(11);
+    LedManager::resetLeds();
+
+    for (int i = 0; i <= 6; i++) {
+      LedManager::turnOnLed(6-i);
+      LedManager::turnOnLed(5+i);
+      delay(20);
+    }
+
+    LedManager::resetLeds();
 
     writeConfig();
   }
@@ -67,8 +74,13 @@ namespace ConfigManager {
 
     EEPROM.get(NORMALISED_WATER_POINT_ADDR, NORMALISED_WATER_POINT);
 
+    // Enable button
+    pinMode(PIN_PA2, INPUT_PULLUP);
+
+    // Calibrate if the eeprom is not configured
+    // or if the button is held
     // If it's not configured the EEPROM contains 0xFF in each location
-    if (DRY_POINT == 0xFFFF && WET_POINT == 0xFFFF) {
+    if ((DRY_POINT == 0xFFFF && WET_POINT == 0xFFFF) || digitalRead(PIN_PA2) == LOW) {
       calibrate();
     }
   }

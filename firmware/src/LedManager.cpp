@@ -60,7 +60,12 @@ namespace LedManager {
     _ledEnable[ledNumber] = 1;
   }
 
-  
+  void resetLeds() {
+    for (int i = 0; i < 12; i++) {
+      flashLed(i, FlashRate::NONE);
+      turnOffLed(i);
+    }
+  }
 
   void _createCurrentPathForLed(int ledNumber) {
     switch (ledNumber) {
