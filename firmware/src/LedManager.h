@@ -6,5 +6,8 @@ namespace LedManager {
   extern void setup();
   extern void turnOnLed(int ledNumber);
   extern void turnOffLed(int ledNumber);
+
+  enum FlashRate {NONE, SLOW, MEDIUM, FAST};
+  extern void flashLed(int ledNumber, FlashRate rate);
 }
 #endif

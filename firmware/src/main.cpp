@@ -20,19 +20,18 @@ void setup() {
 
 void loop() {
   if (millis() > 1000) {
-    SleepManager::sleep();
+    //SleepManager::sleep();
   }
-
 
   int moisture = MoistureManager::getNormalisedReading();
   for (int i = 0; i < 12; i++) {
-    if ((12-i) <= moisture) {
+    if ((12-i) == 3) {
+      LedManager::flashLed(i, LedManager::FlashRate::SLOW);
+    } else if ((12-i) <= moisture) {
       LedManager::turnOnLed(i);
-    }
-    else {
+    } else {
       LedManager::turnOffLed(i);
     }
   }
-
   delay(100);
 }

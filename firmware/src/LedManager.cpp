@@ -8,7 +8,7 @@ namespace LedManager {
   // 255 is on, < 127 is off
   int _ledState[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
   // Gets subtracted from the led state each cycle
-  int _flashModifier[12] = {8,8,8,8,16,16,4,4,8,8,8,8};
+  int _flashModifier[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
   int _currentLed = 0;
 
   void _openCurrentPath(int from, int to) {
@@ -33,11 +33,34 @@ namespace LedManager {
   }
 
   void turnOffLed(int ledNumber) {
+    // turns off an led
     if (_ledEnable[ledNumber] == 1) {
       _ledEnable[ledNumber] = 0;
       _ledState[ledNumber] = 0;
     }
   }
+
+  void flashLed(int ledNumber, FlashRate rate) {
+    int rateNumber = 0;
+    switch (rate) {
+      case (FlashRate::NONE):
+        rateNumber = 0;
+        break;
+      case (FlashRate::SLOW):
+        rateNumber = 4;
+        break;
+      case (FlashRate::MEDIUM):
+        rateNumber = 16;
+        break;
+      case (FlashRate::FAST):
+        rateNumber = 32;
+        break;
+    }
+    _flashModifier[ledNumber] = rateNumber;
+    _ledEnable[ledNumber] = 1;
+  }
+
+  
 
   void _createCurrentPathForLed(int ledNumber) {
     switch (ledNumber) {
