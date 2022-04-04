@@ -13,7 +13,6 @@ void setup() {
   
   LedManager::setup();
   MoistureManager::setup();
-  SleepManager::setup();
 
   TCA0.SPLIT.CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV64_gc; //enable the timer 64 prescaler
   delay(100);
