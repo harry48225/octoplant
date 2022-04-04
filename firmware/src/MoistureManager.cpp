@@ -1,12 +1,10 @@
 #include "MoistureManager.h"
+#include "ConfigManager.h"
 #include <Arduino.h>
 
 namespace MoistureManager {
   const int _sensorOutput = PIN_PA1;
   const int _sensorInput = PIN_PA3;
-
-  int _DRY_POINT = 3200;
-  int _WET_POINT = 1500;
 
   void setup() {
     analogReadResolution(12);
@@ -19,8 +17,8 @@ namespace MoistureManager {
 
   int getNormalisedReading() {
     int moisture = analogRead(_sensorOutput);
-    moisture -= _WET_POINT;
-    moisture /= ((_DRY_POINT - _WET_POINT)/12);
+    moisture -= ConfigManager::WET_POINT;
+    moisture /= ((ConfigManager::DRY_POINT - ConfigManager::WET_POINT)/12);
     moisture = 12 - constrain(moisture, 0, 12);
 
     return moisture;
