@@ -33,4 +33,6 @@ void loop() {
       LedManager::turnOffLed(i);
     }
   }
+
+  delay(100);
 }

@@ -4,7 +4,11 @@
 namespace LedManager {
   /*  Manages the charlieplexed leds */
   int _pins[4] = {PIN_PA7, PIN_PA6, PIN_PA5, PIN_PA4};
-  int _ledState[12] = {0,0,0,0,0,0,0,0,0,0,0,0}; // This might be better as a 16 bit number
+  int _ledEnable[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
+  // 255 is on, < 127 is off
+  int _ledState[12] = {0,0,0,0,0,0,0,0,0,0,0,0};
+  // Gets subtracted from the led state each cycle
+  int _flashModifier[12] = {8,8,8,8,16,16,4,4,8,8,8,8};
   int _currentLed = 0;
 
   void _openCurrentPath(int from, int to) {
@@ -22,11 +26,17 @@ namespace LedManager {
   }
 
   void turnOnLed(int ledNumber) {
-    _ledState[ledNumber] = 1;
+    if (_ledEnable[ledNumber] == 0) {
+      _ledEnable[ledNumber] = 1;
+      _ledState[ledNumber] = 255;
+    }
   }
 
   void turnOffLed(int ledNumber) {
-    _ledState[ledNumber] = 0;
+    if (_ledEnable[ledNumber] == 1) {
+      _ledEnable[ledNumber] = 0;
+      _ledState[ledNumber] = 0;
+    }
   }
 
   void _createCurrentPathForLed(int ledNumber) {
@@ -73,18 +83,29 @@ namespace LedManager {
   void setup() {
     // There is a 64 prescaler on TCA0
     TCA0.SPLIT.LPER = 0xFF; // Count down from 0xFF (255), At 10MHz  (10MHz/255)/64 ~ 600Hz
-    TCA0.SPLIT.LCMP0 = 0x0F; // Trigger interrupt after half count
+    TCA0.SPLIT.LCMP0 = 0xFF; // Trigger interrupt after full count
     TCA0.SPLIT.INTCTRL |= 0x10; // Enable interrupt on LCMP0
   }
 
-  // Triggers ~600Hz
+  // Triggers ~600Hz -- This is probably too high given how much computation happens in the ISR
   ISR(TCA0_LCMP0_vect) {
-    _closeCurrentPaths();
-    if (_ledState[_currentLed] == 1) {
-      _createCurrentPathForLed(_currentLed);
-    }
-    _currentLed = (_currentLed + 1) % 12;
     TCA0.SPLIT.INTFLAGS = 0xFF; // Clear the int flags otherwise millis breaks
+    _closeCurrentPaths();
+
+    if (_ledEnable[_currentLed] == 1) {
+      if (_ledState[_currentLed] < _flashModifier[_currentLed]) {
+        _ledState[_currentLed] = 255 - (_flashModifier[_currentLed] - _ledState[_currentLed]);
+      } else {
+        _ledState[_currentLed] -= _flashModifier[_currentLed];
+      }
+
+      if (_ledState[_currentLed] > 127)
+      {
+        _createCurrentPathForLed(_currentLed);
+      }
+    }
+
+    _currentLed = (_currentLed + 1) % 12; 
   }
 }
 
