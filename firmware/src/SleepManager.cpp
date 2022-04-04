@@ -4,6 +4,11 @@
 #include "LedManager.h"
 
 namespace SleepManager {
+  void setup() {
+    set_sleep_mode(SLEEP_MODE_PWR_DOWN);
+    sleep_enable();
+  }
+
   void sleep() {
     for (int i = 0; i < 12; i++) {
       LedManager::turnOffLed(i);
@@ -38,9 +43,7 @@ namespace SleepManager {
 
     // Enable pin falling interrupt and internal pullup on PIN_PA2
     // This is the button to wake the device
-    PORTA.PIN2CTRL |= (PORT_PULLUPEN_bm | PORT_ISC_RISING_gc);
-    set_sleep_mode(SLEEP_MODE_PWR_DOWN);
-    sleep_enable();
+    PORTA.PIN2CTRL = (PORT_PULLUPEN_bm | PORT_ISC_BOTHEDGES_gc);
     sleep_cpu();
   }
 
