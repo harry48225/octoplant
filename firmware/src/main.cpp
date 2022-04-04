@@ -14,17 +14,16 @@ void setup() {
   
   LedManager::setup();
   MoistureManager::setup();
-  ConfigManager::writeConfig();
-  ConfigManager::loadConfig();
 
   TCA0.SPLIT.CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV64_gc; //enable the timer 64 prescaler
   delay(100);
+  ConfigManager::loadConfig();
 }
 
 void loop() {
-  if (millis() > 5000) {
-    SleepManager::sleep();
-  }
+  // if (millis() > 5000) {
+  //   SleepManager::sleep();
+  // }
 
   int moisture = MoistureManager::getNormalisedReading();
   for (int i = 0; i < 12; i++) {

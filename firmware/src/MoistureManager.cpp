@@ -16,11 +16,15 @@ namespace MoistureManager {
   }
 
   int getNormalisedReading() {
-    int moisture = analogRead(_sensorOutput);
+    int moisture = getRawReading();
     moisture -= ConfigManager::WET_POINT;
     moisture /= ((ConfigManager::DRY_POINT - ConfigManager::WET_POINT)/12);
     moisture = 12 - constrain(moisture, 0, 12);
 
     return moisture;
+  }
+
+  int getRawReading() {
+    return analogRead(_sensorOutput);
   }
 }
