@@ -16,6 +16,21 @@ namespace ConfigManager {
   int WET_POINT;// = 1500;
   int NORMALISED_WATER_POINT;// = 3;
 
+  void programSuccessfulAnimation() {
+    LedManager::resetLeds();
+
+    // Display programming animation
+    for (int i = 0; i <= 6; i++) {
+      LedManager::turnOnLed(6-i);
+      LedManager::turnOnLed(5+i);
+      delay(20);
+    }
+
+    LedManager::resetLeds();
+
+    delay(200);
+  }
+
   void waitForButtonRelease() {
     while (digitalRead(PIN_PA2) == LOW) {
       delay(10);
@@ -26,6 +41,23 @@ namespace ConfigManager {
     while (digitalRead(PIN_PA2) == HIGH) {
       delay(10);
     }
+  }
+
+  void setWaterPoint() {
+    // Set the water point as the current normalised water reading
+
+    // Should be triggered on long press
+    NORMALISED_WATER_POINT = MoistureManager::getNormalisedReading();
+
+    LedManager::flashLed(12-NORMALISED_WATER_POINT, LedManager::FlashRate::FAST);
+
+    waitForButtonRelease();
+
+    delay(200);
+
+    writeConfig();
+
+    programSuccessfulAnimation();
   }
 
   void calibrate() {
@@ -59,18 +91,9 @@ namespace ConfigManager {
 
     waitForButtonRelease();
 
-    LedManager::resetLeds();
-
-    // Display programming animation
-    for (int i = 0; i <= 6; i++) {
-      LedManager::turnOnLed(6-i);
-      LedManager::turnOnLed(5+i);
-      delay(20);
-    }
-
-    LedManager::resetLeds();
-
     writeConfig();
+
+    programSuccessfulAnimation();
   }
 
   void loadConfig() {
@@ -104,6 +127,6 @@ namespace ConfigManager {
   void writeConfig() {
     EEPROM.put(DRY_POINT_ADDR, DRY_POINT);
     EEPROM.put(WET_POINT_ADDR, WET_POINT);
-    EEPROM.put(NORMALISED_WATER_POINT_ADDR, 4);
+    EEPROM.put(NORMALISED_WATER_POINT_ADDR, NORMALISED_WATER_POINT);
   }
 }

@@ -8,6 +8,7 @@ namespace ConfigManager {
 
   extern void loadConfig();
   extern void writeConfig();
+  extern void setWaterPoint();
 }
 
 #endif

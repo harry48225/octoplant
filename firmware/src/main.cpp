@@ -9,7 +9,9 @@
   #error "This sketch is written for use with TCB1 as the millis timing source"
 #endif
 
-long startTime = -1;
+long startTime = 0;
+
+long buttonPressTime = 0;
 
 void setup() {
   takeOverTCA0();
@@ -25,12 +27,25 @@ void setup() {
 
   delay(250); // Wait for moisture reading to stabilise
 
+  pinMode(PIN_PA2, INPUT_PULLUP);
+
   startTime = millis();
 }
 
 void loop() {
-  if ((millis()-startTime) > 3000) {
+  if ((millis()-startTime) > 3000 && buttonPressTime == 0) {
     SleepManager::sleep();
+  }
+
+  if (digitalRead(PIN_PA2) == LOW) {
+    if (buttonPressTime == 0) {
+      buttonPressTime = millis();
+    } else if ((millis() - buttonPressTime) > 1000*10) {
+      ConfigManager::setWaterPoint();
+      buttonPressTime = 0;
+    }
+  } else {
+    buttonPressTime = 0;
   }
 
   int moisture = MoistureManager::getNormalisedReading();
