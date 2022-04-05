@@ -4,6 +4,7 @@
 #include "SleepManager.h"
 #include "ConfigManager.h"
 #include <avr/sleep.h>
+#include "Constants.h"
 
 #ifndef MILLIS_USE_TIMERB1
   #error "This sketch is written for use with TCB1 as the millis timing source"
@@ -27,22 +28,24 @@ void setup() {
 
   delay(250); // Wait for moisture reading to stabilise
 
-  pinMode(PIN_PA2, INPUT_PULLUP);
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
 
   startTime = millis();
 }
 
 void loop() {
-  if ((millis()-startTime) > 3000 && buttonPressTime == 0) {
+  byte buttonIsPressed = digitalRead(BUTTON_PIN) == LOW;
+
+  if ((millis()-startTime) > KEEP_AWAKE_TIME_MS && !buttonIsPressed) {
     SleepManager::sleep();
   }
 
-  if (digitalRead(PIN_PA2) == LOW) {
+  if (buttonIsPressed) {
     if (buttonPressTime == 0) {
       buttonPressTime = millis();
-    } else if ((millis() - buttonPressTime) > 1000*10) {
+    } else if ((millis() - buttonPressTime) > WATER_POINT_SETTING_WAIT_MS) {
       ConfigManager::setWaterPoint();
-      buttonPressTime = 0;
+      startTime = millis();
     }
   } else {
     buttonPressTime = 0;

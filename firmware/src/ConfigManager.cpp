@@ -4,6 +4,7 @@
 #include <LedManager.h>
 #include <Arduino.h>
 #include "MoistureManager.h"
+#include "Constants.h"
 
 // Handles storing data in the EEPROM
 // MAP
@@ -32,65 +33,50 @@ namespace ConfigManager {
   }
 
   void waitForButtonRelease() {
-    while (digitalRead(PIN_PA2) == LOW) {
+    while (digitalRead(BUTTON_PIN) == LOW) {
       delay(10);
     }
   }
 
   void waitForButtonPress() {
-    while (digitalRead(PIN_PA2) == HIGH) {
+    while (digitalRead(BUTTON_PIN) == HIGH) {
       delay(10);
     }
   }
 
   void setWaterPoint() {
     // Set the water point as the current normalised water reading
-
     // Should be triggered on long press
     NORMALISED_WATER_POINT = MoistureManager::getNormalisedReading();
-
     LedManager::flashLed(12-NORMALISED_WATER_POINT, LedManager::FlashRate::FAST);
-
     waitForButtonRelease();
-
     delay(200);
-
     writeConfig();
-
     programSuccessfulAnimation();
   }
 
   void calibrate() {
     // Enable button
-    pinMode(PIN_PA2, INPUT_PULLUP);
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
     
     // Set the wet point
-    
     // Flash all leds
     for (int i = 0; i < 12; i++) {
       LedManager::flashLed(i, LedManager::FlashRate::FAST);
     }
 
     waitForButtonRelease();
-
     waitForButtonPress();
-
     WET_POINT = MoistureManager::getRawReading() + 100;
-
     LedManager::resetLeds();
-
     waitForButtonRelease();
-
+    
     // Set the dry point  
-
     // Flash the lowest LED
     LedManager::flashLed(11, LedManager::FlashRate::FAST);
     waitForButtonPress();
-
     DRY_POINT = MoistureManager::getRawReading() - 100;
-
     waitForButtonRelease();
-
     writeConfig();
 
     programSuccessfulAnimation();
@@ -114,12 +100,12 @@ namespace ConfigManager {
     EEPROM.get(NORMALISED_WATER_POINT_ADDR, NORMALISED_WATER_POINT);
 
     // Enable button
-    pinMode(PIN_PA2, INPUT_PULLUP);
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
 
     // Calibrate if the eeprom is not configured
-    // or if the button is held
+    // or if the button is held and we've just powered on
     // If it's not configured the EEPROM contains 0xFF in each location
-    if ((DRY_POINT == 0xFFFF && WET_POINT == 0xFFFF) || (digitalRead(PIN_PA2) == LOW && isPowerOnReset)) {
+    if ((DRY_POINT == 0xFFFF && WET_POINT == 0xFFFF) || (digitalRead(BUTTON_PIN) == LOW && isPowerOnReset)) {
       calibrate();
     }
   }
