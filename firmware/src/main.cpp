@@ -20,10 +20,12 @@ void setup() {
   TCA0.SPLIT.CTRLA = TCA_SPLIT_ENABLE_bm | TCA_SPLIT_CLKSEL_DIV64_gc; //enable the timer 64 prescaler
   delay(100);
   ConfigManager::loadConfig();
+
+  delay(250); // Wait for moisture reading to stabilise
 }
 
 void loop() {
-  if (millis() > 1000) {
+  if (millis() > 3000) {
     SleepManager::sleep();
   }
 
