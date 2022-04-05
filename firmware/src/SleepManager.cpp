@@ -26,20 +26,20 @@ namespace SleepManager {
     
     // Set sensor input as output so it's not floating
     pinMode(PIN_PA1, OUTPUT);
-    digitalWrite(PIN_PA3, LOW);
+    //digitalWrite(PIN_PA3, LOW);
     
     // Drive all LED pins LOW
     pinMode(PIN_PA4, OUTPUT);
     pinMode(PIN_PA5, OUTPUT);
     pinMode(PIN_PA6, OUTPUT);
     pinMode(PIN_PA7, OUTPUT);
-    digitalWrite(PIN_PA4, LOW);
-    digitalWrite(PIN_PA5, LOW);
-    digitalWrite(PIN_PA6, LOW);
-    digitalWrite(PIN_PA7, LOW);
+    // digitalWrite(PIN_PA4, LOW);
+    // digitalWrite(PIN_PA5, LOW);
+    // digitalWrite(PIN_PA6, LOW);
+    // digitalWrite(PIN_PA7, LOW);
 
     ADC0.CTRLA = ~ADC_ENABLE_bm; // Disable ADC
-    delay(10);
+    delay(100);
 
     // Enable pin falling interrupt and internal pullup on PIN_PA2
     // This is the button to wake the device

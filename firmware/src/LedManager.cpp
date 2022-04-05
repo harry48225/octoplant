@@ -105,7 +105,7 @@ namespace LedManager {
       case 5:
         _openCurrentPath(3,2);
         break;    
-  }
+    }
   }
 
   void setup() {
