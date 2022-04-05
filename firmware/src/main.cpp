@@ -9,6 +9,8 @@
   #error "This sketch is written for use with TCB1 as the millis timing source"
 #endif
 
+long startTime = -1;
+
 void setup() {
   takeOverTCA0();
   TCA0.SPLIT.CTRLD = 0x01; // Enable split mode  
@@ -22,10 +24,12 @@ void setup() {
   ConfigManager::loadConfig();
 
   delay(250); // Wait for moisture reading to stabilise
+
+  startTime = millis();
 }
 
 void loop() {
-  if (millis() > 3000) {
+  if ((millis()-startTime) > 3000) {
     SleepManager::sleep();
   }
 
