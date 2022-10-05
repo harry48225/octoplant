@@ -1139,7 +1139,7 @@
     (uuid 605de73e-a7ea-4620-9d22-84bc47769d7a)
   )
   (text "RED LED 150080RS75000\n2V forward\n30mA\n\nOrdered Yellow 224-9973\n2V Forward "
-    (at 165.1 49.53 0)
+    (at 160.02 53.34 0)
     (effects (font (size 1.27 1.27)) (justify left bottom))
     (uuid 6c193578-9b00-4e5a-b193-bfc3b05f9d60)
   )
