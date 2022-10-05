@@ -12,7 +12,7 @@ Built with:
  - kicad
  - platform io
  
- (More info on hackaday)[https://hackaday.io/project/187372/details/]
+ [More info on hackaday](https://hackaday.io/project/187372/details/)
 
 ![octoplant in an aparagus fern](/images/light_in_plant.jpg)
 
